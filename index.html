@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildberries Аналитика Софьи</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+  <h1>Сервис аналитики Wildberries</h1>
+  <p>Привет, Софья! </p>
+  <p>Этот сайт готов принимать данные аналитики.</p>
+
+  <div id="output" style="white-space: pre-wrap; text-align: left; max-width: 800px; margin: 30px auto; background: #f9f9f9; padding: 15px; border-radius: 8px;"></div>
+
+  <script>
+    async function loadData() {
+      const output = document.getElementById("output");
+      output.innerText = " Загружаю данные с Wildberries...";
+      try {
+        const res = await fetch("/api/proxy");
+        const data = await res.json();
+        output.innerText = " Первые 5 строк данных:\n\n" + JSON.stringify(data.slice(0,5), null, 2);
+      } catch (err) {
+        output.innerText = " Ошибка при загрузке: " + err.message;
+      }
+    }
+    loadData();
+  </script>
+</body>
+</html>
