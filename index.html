@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 script-src 'self' 'unsafe-eval';
-                 connect-src 'self' https://statistics-api.wildberries.ru;
-                 style-src 'self' 'unsafe-inline';
-                 object-src 'none'">
+        content="default-src * 'self' data: blob: filesystem: about:;
+                 script-src * 'self' 'unsafe-inline' 'unsafe-eval' data:;
+                 style-src * 'self' 'unsafe-inline' data:;
+                 connect-src * 'self' https://statistics-api.wildberries.ru https://advert-api.wb.ru data:;
+                 img-src * 'self' data: blob: filesystem:;
+                 object-src 'none';
+                 base-uri 'self';
+                 frame-src *;
+                 frame-ancestors *;
+                 form-action 'self';">
   <title>Wildberries Аналитика Софьи</title>
 </head>
+
 <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
   <h1>Сервис аналитики Wildberries</h1>
   <p>Привет, Софья! 👋</p>
