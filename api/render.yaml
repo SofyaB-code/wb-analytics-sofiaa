@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: wb-analytics-sofia
-    env: node
-    plan: free
-    buildCommand: npm install
-    startCommand: node proxy.js
-    autoDeploy: true
