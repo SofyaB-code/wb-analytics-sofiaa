@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-eval';
+                 connect-src 'self' https://statistics-api.wildberries.ru;
+                 style-src 'self' 'unsafe-inline';
+                 object-src 'none'">
   <title>Wildberries Аналитика Софьи</title>
 </head>
 <body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
@@ -21,13 +27,11 @@
         const res = await fetch("/api/proxy");
         const data = await res.json();
 
-        // Если WB вернул объект — выводим его как есть
         if (!Array.isArray(data)) {
           output.textContent = "⚠️ Ответ не массив. Что вернуло API:\n\n" + JSON.stringify(data, null, 2);
           return;
         }
 
-        // Если массив — показываем первые 5 строк
         output.textContent = "✅ Первые 5 строк данных:\n\n" + JSON.stringify(data.slice(0, 5), null, 2);
       } catch (err) {
         output.textContent = "❌ Ошибка при загрузке: " + err.message;
