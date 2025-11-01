@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src * 'self' data: blob: filesystem: about:;
-                 script-src * 'self' 'unsafe-inline' 'unsafe-eval' data:;
-                 style-src * 'self' 'unsafe-inline' data:;
-                 connect-src * 'self' https://statistics-api.wildberries.ru https://advert-api.wb.ru data:;
-                 img-src * 'self' data: blob: filesystem:;
-                 object-src 'none';
-                 base-uri 'self';
-                 frame-src *;
-                 frame-ancestors *;
-                 form-action 'self';">
-  <title>Wildberries Аналитика Софьи</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сервис аналитики Wildberries</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background-color: #fafafa;
+      color: #222;
+    }
+    #output {
+      white-space: pre-wrap;
+      text-align: left;
+      max-width: 800px;
+      margin: 30px auto;
+      background: #f2f2f2;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  </style>
 </head>
-
-<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+<body>
   <h1>Сервис аналитики Wildberries</h1>
   <p>Привет, Софья! 👋</p>
   <p>Этот сайт готов принимать данные аналитики.</p>
-
-  <div id="output" style="white-space: pre-wrap; text-align: left; max-width: 900px; margin: 30px auto; background: #f9f9f9; padding: 15px; border-radius: 8px;"></div>
+  <div id="output">Загрузка данных...</div>
 
   <script>
     async function loadData() {
       const output = document.getElementById("output");
-      output.textContent = "⏳ Загружаю данные с Wildberries...";
+      output.textContent = "🔄 Подключение к API...";
 
       try {
         const res = await fetch("/api/proxy");
@@ -38,7 +45,7 @@
           return;
         }
 
-        output.textContent = "✅ Первые 5 строк данных:\n\n" + JSON.stringify(data.slice(0, 5), null, 2);
+        output.textContent = "✅ Первые строки данных:\n\n" + JSON.stringify(data.slice(0, 5), null, 2);
       } catch (err) {
         output.textContent = "❌ Ошибка при загрузке: " + err.message;
       }
@@ -46,5 +53,7 @@
 
     loadData();
   </script>
+
+  <!-- обновление для Vercel -->
 </body>
 </html>
