@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Аналитика Wildberries Софьи</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      margin: 40px;
+      background: #f9f6ff;
+    }
+    button {
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 22px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    pre {
+      text-align: left;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+      overflow-x: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Аналитика Wildberries Софьи</h1>
+  <p>Нажми кнопку, чтобы получить данные с API WB</p>
+  <button id="load"> Загрузить данные</button>
+  <pre id="output"></pre>
+
+  <script>
+    const API_TOKEN = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjUwOTA0djEiLCJ0eXAiOiJKV1QifQ.eyJhY2MiOjEsImVudCI6MSwiZXhwIjoxNzc3Nzk1NTEzLCJpZCI6IjAxOWE0MTA2LTI2ZTUtNzExMC04YmQ2LTNmNzQ1OTg0ZDcwOCIsImlpZCI6MjAxNTQ2MTksIm9pZCI6MjgyNzg0LCJzIjo4MjQ0LCJzaWQiOiI3NmVmYzQ2OS1hODE1LTQ0YTItYjMyMS03MzM3MjlmNjQ2MGUiLCJ0IjpmYWxzZSwidWlkIjoyMDE1NDYxOX0.U33zwoONUb5eWKqDo38dV7yjRi7pDtAn2XSII7GNjMYtqNoF1aEaqsif0lfupiP9xI76Ns8KWbrC1zWJVXSx9A";
+
+    async function loadData() {
+      const output = document.getElementById("output");
+      output.textContent = " Загружаю данные...";
+
+      try {
+        const today = new Date();
+        const start = new Date(today);
+        start.setDate(today.getDate() - 7);
+        const dateFrom = start.toISOString().split("T")[0];
+        const dateTo = today.toISOString().split("T")[0];
+
+        const url = `https://statistics-api.wildberries.ru/api/v1/supplier/reportDetailByPeriod?dateFrom=${dateFrom}&dateTo=${dateTo}&limit=100`;
+
+        const response = await fetch(url, {
+          headers: { Authorization: API_TOKEN }
+        });
+
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          output.textContent = JSON.stringify(data.slice(0, 10), null, 2);
+        } else {
+          output.textContent = " Ответ не массив:\n" + JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        output.textContent = " Ошибка: " + err.message;
+      }
+    }
+
+    document.getElementById("load").addEventListener("click", loadData);
+  </script>
+</body>
+</html>
