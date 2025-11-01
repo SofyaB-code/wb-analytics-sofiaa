@@ -1,79 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Аналитика Wildberries Софьи</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 40px;
-      background: #faf7ff;
-    }
-    button {
-      background-color: #6a0dad;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #580c9c;
-    }
-    pre {
-      text-align: left;
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 20px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-      overflow-x: auto;
-    }
-    .status {
-      font-weight: bold;
-      margin-top: 20px;
-      color: #444;
-    }
-    .error {
-      color: red;
-    }
-    .success {
-      color: green;
-    }
-  </style>
-</head>
-<body>
-  <h1>Аналитика Wildberries Софьи</h1>
-  <p>Нажми кнопку, чтобы получить данные с API WB</p>
+<script>
+  document.getElementById('load').onclick = async () => {
+    const out = document.getElementById('output');
+    out.textContent = "Загружаем данные...";
 
-  <button id="load"> Загрузить данные</button>
-  <div class="status" id="status"></div>
-  <pre id="output"></pre>
+    try {
+      const response = await fetch("/api/proxy"); // обращается к backend proxy.js
 
-  <script>
-    const statusEl = document.getElementById("status");
-    const output = document.getElementById("output");
+      if (!response.ok) {
+        throw new Error("Ошибка API: " + response.status);
+      }
 
-    document.getElementById("load").onclick = async () => {
-      output.textContent = "";
-      statusEl.textContent = " Отправляю запрос...";
-      statusEl.className = "status";
-
-      try {
-        const response = await fetch("/api/proxy");
-
-        if (!response.ok) {
-          statusEl.textContent = ` Ошибка: ${response.status} — ${response.statusText}`;
-          statusEl.classList.add("error");
-          return;
-        }
-
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          statusEl.textContent =
+      const data = await response.json();
+      out.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      out.textContent = "Ошибка при запросе: " + err.message;
+    }
+  };
+</script>]
