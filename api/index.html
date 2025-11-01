@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildberries Аналитика Софьи</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+  <h1>Сервис аналитики Wildberries</h1>
+  <p>Привет, Софья! 👋</p>
+  <p>Этот сайт готов принимать данные аналитики.</p>
+
+  <div id="output" style="white-space: pre-wrap; text-align: left; max-width: 900px; margin: 30px auto; background: #f9f9f9; padding: 15px; border-radius: 8px;"></div>
+
+  <script>
+    async function loadData() {
+      const output = document.getElementById("output");
+      output.textContent = "⏳ Загружаю данные с Wildberries...";
+
+      // Период можно менять — сейчас последние 7 дней
+      const today = new Date();
+      const weekAgo = new Date(Date.now() - 7*24*60*60*1000);
+      const from = weekAgo.toISOString().slice(0,10);
+      const to   = today.toISOString().slice(0,10);
+
+      try {
+        const res = await fetch(`/api/proxy?from=${from}&to=${to}&limit=1000`);
+        const data = await res.json();
+
+        // Если WB вернул объект с полем data — берём его, иначе ищем массив на верхнем уровне
+        let rows = [];
+        if (Array.isArray(data)) {
+          rows = data;
+        } else if (data && Array.isArray(data.data)) {
+          rows = data.data;
+        }
+
+        if (!rows.length) {
+          // Показываем, что именно пришло — поможет диагностике
+          output.textContent =
+            "⚠️ Пришёл не массив данных. Что вернуло API:\n\n" +
+            JSON.stringify(data, null, 2);
+          return;
+        }
+
+        output.textContent =
+          "✅ Первые 5 строк данных:\n\n" +
+          JSON.stringify(rows.slice(0, 5), null, 2);
+      } catch (err) {
+        output.textContent = "❌ Ошибка при загрузке: " + err.message;
+        console.error(err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
