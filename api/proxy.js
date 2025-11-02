@@ -10,14 +10,11 @@ export default async function handler(req, res) {
   const dateFrom = start.toISOString().split("T")[0];
   const dateTo = today.toISOString().split("T")[0];
 
-  const params = new URLSearchParams({
-    dateFrom,
-    dateTo,
-    limit: "100"
-  });
-
   try {
-    const response = await fetch(`${apiUrl}?${params.toString()}`, {
+    const fullUrl = ${apiUrl}?dateFrom=${dateFrom}&dateTo=${dateTo}&limit=100;
+    console.log("🔹 Запрос к WB:", fullUrl);
+
+    const response = await fetch(fullUrl, {
       method: "GET",
       headers: {
         "Authorization": token,
@@ -25,25 +22,31 @@ export default async function handler(req, res) {
       }
     });
 
-    const text = await response.text(); // читаем всё, даже если не JSON
+    const text = await response.text();
 
-    // если сервер WB вернул ошибку
     if (!response.ok) {
       console.error("Ответ WB:", text);
       return res.status(response.status).json({
         error: Ошибка Wildberries API (${response.status}),
-        message: text
+        message: text,
+        debugUrl: fullUrl
       });
     }
 
-    // если всё ок
-    const data = JSON.parse(text);
+    // Проверяем, JSON ли это
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Ответ не JSON: ${text.slice(0, 200)}`);
+    }
+
     res.status(200).json(data);
 
   } catch (err) {
     console.error("Ошибка при запросе:", err);
     res.status(500).json({
-      error: "Ошибка при запросе к Wildberries API",
+      error: "Ошибка при выполнении запроса",
       details: err.message
     });
   }
