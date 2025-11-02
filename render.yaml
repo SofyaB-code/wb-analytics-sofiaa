@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: wildberries-analytics-sofia
+    env: node
+    buildCommand: ""
+    startCommand: "node api/proxy.js"
+    plan: free
