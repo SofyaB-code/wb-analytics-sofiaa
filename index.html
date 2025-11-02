@@ -1,61 +1,126 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Аналитика Wildberries Софьи</title>
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
-      background-color: #fafafa;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(145deg, #f7f3ff, #efe8ff);
+      color: #2d006b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding-top: 50px;
     }
+
     h1 {
-      color: #4B0082;
+      font-size: 2.3em;
+      color: #7000ff;
+      text-shadow: 1px 1px 6px rgba(160, 0, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+
+    h1 img {
+      width: 38px;
+      height: 38px;
+    }
+
+    p {
+      margin: 5px 0 25px;
+      font-size: 1.1em;
+      opacity: 0.8;
+    }
+
     button {
-      padding: 10px 20px;
+      padding: 12px 25px;
       font-size: 16px;
       cursor: pointer;
-      background-color: #6a0dad;
+      background: linear-gradient(135deg, #8a2be2, #ba68c8);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+      transition: all 0.3s ease;
     }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+    }
+
     pre {
       text-align: left;
-      max-width: 800px;
-      margin: 30px auto;
-      background: #f3f3f3;
-      padding: 15px;
-      border-radius: 8px;
+      max-width: 850px;
+      width: 90%;
+      margin-top: 35px;
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
       overflow-x: auto;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #333;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 20px;
+      font-size: 0.9em;
+      opacity: 0.6;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #8a2be2;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <h1>Аналитика Wildberries Софьи</h1>
+  <h1>
+    <img src="https://cdn-icons-png.flaticon.com/512/4813/4813210.png" alt="chart" />
+    Аналитика Wildberries Софьи
+  </h1>
   <p>Нажми кнопку, чтобы получить данные с API WB</p>
-  <button id="load">Загрузить данные</button>
+  <button id="load">📊 Загрузить данные</button>
+  <div class="loader" id="loader"></div>
   <pre id="output"></pre>
 
+  <footer>© 2025 Софья | WB Analytics</footer>
+
   <script>
-    document.getElementById('load').onclick = async () => {
-      const out = document.getElementById('output');
-      out.textContent = "Загружаем данные...";
+    document.getElementById("load").onclick = async () => {
+      const out = document.getElementById("output");
+      const loader = document.getElementById("loader");
+      out.textContent = "";
+      loader.style.display = "block";
 
       try {
-        // твой backend-обработчик на Vercel
-        const response = await fetch("https://wb-analytics-sofiaa.vercel.app/api/proxy");
-
-        if (!response.ok) {
-          throw new Error(`Ошибка API: ${response.status}`);
-        }
-
+        const response = await fetch("/api/proxy");
         const data = await response.json();
+        loader.style.display = "none";
         out.textContent = JSON.stringify(data, null, 2);
       } catch (err) {
-        out.textContent = "Ошибка: " + err.message;
+        loader.style.display = "none";
+        out.textContent = "❌ Ошибка при запросе: " + err.message;
       }
     };
   </script>
