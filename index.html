@@ -4,86 +4,30 @@
   <meta charset="UTF-8">
   <title>Аналитика Wildberries Софьи</title>
   <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 40px;
-      background: #faf6ff;
-    }
-    h1 { color: #6a0dad; }
-    button {
-      background: #6a0dad;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    table {
-      border-collapse: collapse;
-      margin: 20px auto;
-      width: 90%;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px 10px;
-      text-align: left;
-    }
-    th {
-      background: #e6ccff;
-    }
-    pre {
-      text-align: left;
-      background: #f3f3f3;
-      padding: 10px;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin-top: 30px;
-    }
+    body {font-family: sans-serif; text-align: center; margin-top: 50px;}
+    button {padding: 10px 20px; font-size: 16px; cursor: pointer;
+            background-color: #6a0dad; color: white; border: none; border-radius: 5px;}
+    pre {text-align: left; max-width: 800px; margin: 30px auto; background: #f3f3f3;
+         padding: 15px; border-radius: 8px; overflow-x: auto;}
   </style>
 </head>
 <body>
   <h1>Аналитика Wildberries Софьи</h1>
-  <p>Нажми кнопку, чтобы загрузить реальные данные</p>
-  <button id="load">📊 Загрузить</button>
-
-  <table id="result">
-    <thead>
-      <tr><th>Дата</th><th>Артикул</th><th>Продано</th><th>Выручка ₽</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <pre id="error"></pre>
+  <p>Нажми кнопку, чтобы получить данные с API WB</p>
+  <button id="load">Загрузить данные</button>
+  <pre id="output"></pre>
 
   <script>
     document.getElementById('load').onclick = async () => {
-      const errorBox = document.getElementById('error');
-      const tbody = document.querySelector('#result tbody');
-      tbody.innerHTML = '';
-      errorBox.textContent = 'Загрузка...';
+      const out = document.getElementById('output');
+      out.textContent = "Загружаем данные...";
 
       try {
-        const res = await fetch('/api/proxy');
-        if (!res.ok) throw new Error('Ошибка запроса: ' + res.status);
-        const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          errorBox.textContent = '⚠️ Ответ не массив. Возможно, ошибка авторизации.';
-          console.log(data);
-          return;
-        }
-
-        data.slice(0, 20).forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td>${item.date || '-'}</td><td>${item.nmId || '-'}</td><td>${item.quantity || 0}</td><td>${item.retail_amount || 0}</td>`;
-          tbody.appendChild(row);
-        });
-
-        errorBox.textContent = '✅ Данные успешно загружены.';
+        const response = await fetch("/api/proxy");
+        const data = await response.json();
+        out.textContent = JSON.stringify(data, null, 2);
       } catch (err) {
-        errorBox.textContent = '❌ ' + err.message;
+        out.textContent = "Ошибка: " + err.message;
       }
     };
   </script>
